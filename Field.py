@@ -9,5 +9,3 @@ class Field:
         # Find Gamepiece at X,Y and if gameepiece there then subtract from the count
 
         print("Scored 1")
-
-    
