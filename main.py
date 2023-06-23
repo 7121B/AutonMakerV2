@@ -24,6 +24,7 @@ pg.display.flip()
 
 fieldPic = pg.image.load("overunderfield.jpg").convert() # Loads image, and then converts it to to have a 
     # consistent pixel format (higher speed)
+appIcon = pg.image.load("uvuv.png").convert()
 
 fieldRec = fieldPic.get_rect()
 fieldRec.center = screenWidth//2, screenHeight//2
@@ -32,6 +33,42 @@ cg = CodeGenerator.CodeGenerator(mainSurface, 13.5, 17.5, 0, False)
 
 keepGameRunning = True
 
+isGettingStartingPosition = True
+
+while isGettingStartingPosition:
+
+    hasClicked = False
+
+    for event in pg.event.get():
+        if event.type == pg.QUIT:   
+           isGettingStartingPosition = False
+           keepGameRunning = False
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_ESCAPE:
+                isGettingStartingPosition = False
+                keepGameRunning = False
+        if event.type == pg.MOUSEBUTTONUP:
+            hasClicked = True    
+            print("Picked starting position! ")
+            cg.moveTo(pg.mouse.get_pos()[0], pg.mouse.get_pos()[1], hasClicked)
+            isGettingStartingPosition = False
+
+    mainSurface.fill((100, 0, 100))
+
+    mainSurface.blit(fieldPic, fieldRec) # Display image on the screen
+
+    cg.displayHUD(pg.mouse.get_pos()[0], pg.mouse.get_pos()[1])
+
+    cg.dragStartingPos(pg.mouse.get_pos()[0], pg.mouse.get_pos()[1])
+
+    cg.update()
+
+    pg.display.flip() # HAVE AFTER ALL GRAPHICS UPDATES HAVE FINISHED
+    
+    pg.display.set_icon(appIcon)
+
+
+
 while keepGameRunning:
     
     hasClicked = False
@@ -39,11 +76,13 @@ while keepGameRunning:
     for event in pg.event.get():
         if event.type == pg.QUIT:   
            keepGameRunning = False
-        if event.type == pg.K_ESCAPE:
-           keepGameRunning = False
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_ESCAPE:
+                keepGameRunning = False
+            cg.switchAction(event.key)
         if event.type == pg.MOUSEBUTTONUP:
             hasClicked = True
-        cg.switchAction(event.type)
+            
             
         
 
@@ -52,6 +91,8 @@ while keepGameRunning:
     mainSurface.fill((100, 0, 100))
 
     mainSurface.blit(fieldPic, fieldRec) # Display image on the screen
+
+    cg.displayHUD(pg.mouse.get_pos()[0], pg.mouse.get_pos()[1])
 
     cg.moveTo(pg.mouse.get_pos()[0], pg.mouse.get_pos()[1], hasClicked)
 

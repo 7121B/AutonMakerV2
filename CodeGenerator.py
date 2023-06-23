@@ -11,6 +11,8 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
     x = 100
     y = 100
 
+    lastLocations = []
+
     botWidth = 0
     botLength = 0
 
@@ -18,7 +20,7 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
 
     botStartingRotation = 0
 
-    lineWidth = 10
+    lineWidth = 5
 
     lineDefaultColor = (72,209,204)
     reverseColor = (235, 252, 252)
@@ -107,7 +109,7 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
                 self.currentColor = self.Action6
                 print("Action6")
 
-    def moveTo(self, mousex, mousey, clicked): 
+    def displayHUD(self, mousex, mousey): 
             
         # sqrt( (x2 - x1)^2 + (y2 - y1)^2 )
         radius = math.sqrt( math.pow((self.x - mousex),2) + math.pow((self.y - mousey),2) )        
@@ -123,7 +125,19 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
         while (theta < 0):
             theta += 2*math.pi
 
+        autonLinePathColor = pg.Color(220, 255, 252)
+        
+        for coord in range(len(self.lastLocations)):
+            if coord % 2 == 0 and len(self.lastLocations) - coord > 3:
+                pg.draw.line(self.mainSurfaceArg, autonLinePathColor, (self.lastLocations[coord],self.lastLocations[coord+1]), 
+                    (self.lastLocations[coord+2],self.lastLocations[coord+3]), abs(self.lineWidth - 2))
+                
+            elif coord % 2 == 0 and coord > 3:
+                pg.draw.line(self.mainSurfaceArg, autonLinePathColor, (self.lastLocations[0],self.lastLocations[1]), 
+                    (self.lastLocations[2],self.lastLocations[3]), abs(self.lineWidth - 2))
 
+                
+        
         #liney = math.tan(theta)*radius
 
         #perpliney = -math.cot(theta)*radius 
@@ -147,11 +161,6 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
             # and the robot default angle. Radius by how far the mouse is from the robot center. Radius is just for visual purposes.
             # Add an arrow as well pointing away from the bot towards the mouse. Append code to CODE variable. Add way to reverse drive
 
-        if (clicked):
-
-            self.x = mousex
-            self.y = mousey
-
             
 
     def saveToProject():
@@ -167,9 +176,48 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
             self.botWidth, self.botLength))
 
         return drew
+    
+    def dragStartingPos(self, x, y):
+        self.x = x - self.botWidth / 2
+        self.y = y - self.botLength / 2
 
 
 
+
+    def moveTo(self, x, y, activated):
+
+        if activated:
+
+            self.x = x - self.botWidth / 2
+            self.y = y - self.botLength / 2
+
+            currentAction = 0
+
+            match self.currentColor:
+                case self.Action1:
+                    currentAction = 1
+                case self.Action2:
+                    currentAction = 2
+                case self.Action3:
+                    currentAction = 3
+                case self.Action4:
+                    currentAction = 4
+                case self.Action5:
+                    currentAction = 5
+                case self.Action6:
+                    currentAction = 6
+                case self.reverseColor:
+                    currentAction = 7
+
+            self.code += f'[ {self.x},{self.y},{currentAction} ]'
+            
+            self.lastLocations.append(self.x)
+            self.lastLocations.append(self.y)
+
+            print(self.code)
+            print("\n")
+
+            self.currentColor = self.lineDefaultColor
 
 
 
