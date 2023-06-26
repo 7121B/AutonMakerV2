@@ -16,6 +16,8 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
     botWidth = 0
     botLength = 0
 
+    fieldRectangle = pg.Rect(1,1,1,1)
+
     mainSurfaceArg = pg.Surface((0,0))
 
     botStartingRotation = 0
@@ -34,6 +36,8 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
 
     currentColor = lineDefaultColor
 
+    projectPath = ""
+
     code = ""     # If Auton, write 0 at the start, if Driver write 1 at the start
 
     ##########   Format   ##########
@@ -42,7 +46,7 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
 
     ################################
 
-    def __init__(self, mainSurfaceArg, width, length, startingRotRad, isDriverArg):
+    def __init__(self, mainSurfaceArg, width, length, fieldRect, startingRotRad, isDriverArg):
 
         self.mainSurfaceArg = mainSurfaceArg
 
@@ -52,6 +56,8 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
         self.botStartingRotation = startingRotRad
 
         self.isDriverRoute = isDriverArg
+
+        self.fieldRectangle = fieldRect
 
         print("w")
 
@@ -163,9 +169,13 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
 
             
 
-    def saveToProject():
-
-        # Save the CODE variable to the User's C++ Project. Tie to a button. Use sys for this.
+    def saveToProject(self):
+        
+        # Open the file inside the project path, appending it
+        fileToSave = open(self.projectPath, 'a')
+        # Save the CODE variable to the User's C++ Project. 
+        fileToSave.write(self.code)
+        fileToSave.close()
 
         print("Saved!")
 
@@ -209,10 +219,22 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
                 case self.reverseColor:
                     currentAction = 7
 
-            self.code += f'[ {self.x},{self.y},{currentAction} ]'
+            # Define native Pygame Pixel coords
+            pixelX = self.x 
+            pixelY = self.y
+
+            print(pixelX - self.fieldRectangle.centerx + self.fieldRectangle.width / 2 )
+
+            # (Pixel X - - recCenterX + recheight/2  ) divided by ( recheight / 12 feet) and feet to centimeters conversion
+            centiX = (pixelX - self.fieldRectangle.centerx + self.fieldRectangle.width / 2 ) / (self.fieldRectangle.width / 12) * 30.48
+            # (Pixel Y - recCenterY + recheight/2 ) divided by ( recheight / 12 feet) and feet to centimeters conversion
+            centiY = (pixelY - self.fieldRectangle.centery + self.fieldRectangle.height / 2 ) / (self.fieldRectangle.height / 12) * 30.48
+
+            self.code += f'[ {centiX},{centiY},{currentAction} ]'
             
-            self.lastLocations.append(self.x)
-            self.lastLocations.append(self.y)
+            # Add Coords to formatted string
+            self.lastLocations.append(pixelX) 
+            self.lastLocations.append(pixelY)
 
             print(self.code)
             print("\n")
@@ -220,7 +242,7 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
             self.currentColor = self.lineDefaultColor
 
 
-
+    
 
 
 

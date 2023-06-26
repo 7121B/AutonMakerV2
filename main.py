@@ -22,14 +22,14 @@ pg.display.flip()
 
 # pg.display.toggle_fullscreen()
 
-fieldPic = pg.image.load("overunderfield.jpg").convert() # Loads image, and then converts it to to have a 
+fieldPic = pg.image.load("overunderfield.png").convert() # Loads image, and then converts it to to have a 
     # consistent pixel format (higher speed)
 appIcon = pg.image.load("uvuv.png").convert()
 
 fieldRec = fieldPic.get_rect()
 fieldRec.center = screenWidth//2, screenHeight//2
 
-cg = CodeGenerator.CodeGenerator(mainSurface, 13.5, 17.5, 0, False)
+cg = CodeGenerator.CodeGenerator(mainSurface, 13.5, 17.5, fieldRec, 0, False)
 
 keepGameRunning = True
 
