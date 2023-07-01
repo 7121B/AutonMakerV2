@@ -1,17 +1,20 @@
 
-import Field
 import math
 import time
 import pygame as pg
+import tkinter as tk
+from tkinter.filedialog import askopenfilename
+
+tk.Tk().withdraw() # Says that you won't be using many tkinter functions
 
 class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotation
 
-    isDriverRoute = False
+    isDriverRoute = False # False means
 
     x = 100
     y = 100
 
-    lastLocations = []
+    lastLocations = [] # Array of last pixel X and pixel Y for rendering
 
     botWidth = 0
     botLength = 0
@@ -59,6 +62,13 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
 
         self.fieldRectangle = fieldRect
 
+        # Tells UvuvLib whether this is auton or driver
+        if isDriverArg:
+            self.code += '1' 
+        else:
+            self.code += '0'
+        
+
         print("w")
 
 
@@ -81,14 +91,11 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
         
         # Call to field and say that the bot scored, generate code for scoring mechanism.
 
-        print("filler")
+        pass
         
     def switchAction(self, eventType):
-
-        if (eventType == pg.K_c):
-            self.currentColor = self.Action1
-            print("Reverse")
-            
+        
+        # A match-case statement to assign the colors based on key input. Used for both rendering and logic.
         match eventType:
             case pg.K_x:
                 self.currentColor = self.lineDefaultColor
@@ -128,9 +135,11 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
 
         theta = -math.atan2(( mousey - self.y) , ( mousex - self.x))
 
+        # Forces the value to be between 0 - 6.1415
         while (theta < 0):
             theta += 2*math.pi
 
+        # Draw Auton path
         autonLinePathColor = pg.Color(220, 255, 252)
         
         for coord in range(len(self.lastLocations)):
@@ -172,7 +181,7 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
     def saveToProject(self):
         
         # Open the file inside the project path, appending it
-        fileToSave = open(self.projectPath, 'a')
+        fileToSave = open(askopenfilename(), 'a')
         # Save the CODE variable to the User's C++ Project. 
         fileToSave.write(self.code)
         fileToSave.close()
@@ -182,12 +191,14 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
     
     def update(self):
 
+        # Draws bot rectangle
         drew = pg.draw.rect(self.mainSurfaceArg, (255, 0, 0), (self.x, self.y,
             self.botWidth, self.botLength))
 
         return drew
     
     def dragStartingPos(self, x, y):
+        # Just a rendering thing. Drags the bot around with the end of the mouse as the center of the bot
         self.x = x - self.botWidth / 2
         self.y = y - self.botLength / 2
 
@@ -196,13 +207,16 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
 
     def moveTo(self, x, y, activated):
 
+        # If clicked
         if activated:
 
+            # Corrects X and Y to be in the end of the cursor
             self.x = x - self.botWidth / 2
             self.y = y - self.botLength / 2
 
-            currentAction = 0
+            currentAction = 0 # Default action
 
+            # Match case for the colors - actions, can be interpreted in UvuvLib
             match self.currentColor:
                 case self.Action1:
                     currentAction = 1
@@ -239,6 +253,7 @@ class CodeGenerator(): # In Constructor: File Path, Bot Starting X, Y, and Rotat
             print(self.code)
             print("\n")
 
+            # Returns color to default for ease of use
             self.currentColor = self.lineDefaultColor
 
 

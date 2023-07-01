@@ -79,9 +79,13 @@ while keepGameRunning:
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_ESCAPE:
                 keepGameRunning = False
+            if event.key == pg.K_s:
+                cg.saveToProject()
+                keepGameRunning = False
             cg.switchAction(event.key)
         if event.type == pg.MOUSEBUTTONUP:
             hasClicked = True
+        
             
             
         
@@ -99,20 +103,6 @@ while keepGameRunning:
     cg.update()
 
     pg.display.flip() # HAVE AFTER ALL GRAPHICS UPDATES HAVE FINISHED
-
-
-
-
-
-# while (1):
-
-    # cg.moveTo(1, 1)
-
-    # x = pg.mouse.get_pos()
-
-    # pg.display.update()
-        
-    # print(x)
 
 
 
